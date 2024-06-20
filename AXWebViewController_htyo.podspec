@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
 #  summary should be tweet-length, and the description more in depth.
 #
 
-s.name         = "AXWebViewController"
+s.name         = "AXWebViewController_htyo"
 s.version      = "0.7.3"
 s.summary      = "A light weight web view controller in iOS."
 
@@ -56,7 +56,7 @@ s.license      = "MIT"
 #  profile URL.
 #
 
-s.author             = { "艾星" => "862099730@qq.com" }
+s.author             = { "htyo" => "arno.yy.chen@icloud.com" }
 # Or just: s.author    = "aiXing"
 # s.authors            = { "aiXing" => "862099730@qq.com" }
 # s.social_media_url   = "http://twitter.com/aiXing"

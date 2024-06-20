@@ -32,7 +32,7 @@
 
 #ifndef AXWebViewControllerLocalizedString
 #define AXWebViewControllerLocalizedString(key, comment) \
-NSLocalizedStringFromTableInBundle(key, @"AXWebViewController", self.resourceBundle, comment)
+NSLocalizedStringFromTableInBundle(key, @"AXWebViewController", self.abbrBundle, comment)
 #endif
 #if !AX_WEB_VIEW_CONTROLLER_USING_WEBKIT
 
@@ -65,6 +65,7 @@ typedef struct {
     /// Located bundle storage.
     NSBundle *_resourceBundle;
     
+    NSBundle *_abbrBundle;
     /// Should adjust the content inset of web view.
     BOOL _automaticallyAdjustsScrollViewInsets;
     /// Cached content offset state of the web view.
@@ -128,6 +129,7 @@ typedef struct {
 @interface AXWebViewController (BundleAccess)
 /// default NSBundle
 @property(strong, nonatomic) NSBundle *resourceBundle;
+@property(strong, nonatomic) NSBundle *abbrBundle;
 @end
 
 @interface _AXWebContainerView: UIView { dispatch_block_t _hitBlock; } @end
@@ -350,7 +352,7 @@ BOOL AX_WEB_VIEW_CONTROLLER_iOS10_0_AVAILABLE() { return AX_WEB_VIEW_CONTROLLER_
     }
     
     // Config navigation item
-    self.navigationItem.leftItemsSupplementBackButton = YES;
+//    self.navigationItem.leftItemsSupplementBackButton = YES;
     
 #if !AX_WEB_VIEW_CONTROLLER_USING_WEBKIT
     [self progressProxy];
@@ -658,6 +660,30 @@ BOOL AX_WEB_VIEW_CONTROLLER_iOS10_0_AVAILABLE() { return AX_WEB_VIEW_CONTROLLER_
     
     return _resourceBundle;
 }
+
+- (NSBundle *)abbrBundle{
+    if (_abbrBundle) return _abbrBundle;
+    NSBundle *bundle = [NSBundle bundleForClass:AXWebViewController.class];
+    NSArray * abbrs = @[@"en",@"zh-Hant",@"zh-Hans"];
+    NSString *resourcePath = [bundle pathForResource:@"AXWebViewController" ofType:@"bundle"] ;
+;
+    if ([abbrs containsObject:self.abbr] ) {
+        NSString * string = [NSString stringWithFormat:@"AXWebViewController.bundle/%@",self.abbr];
+        resourcePath = [bundle pathForResource:string ofType:@"lproj"] ;
+    }
+    
+    if (resourcePath){
+        NSBundle *bundle2 = [NSBundle bundleWithPath:resourcePath];
+        if (bundle2){
+            bundle = bundle2;
+        }
+    }
+    
+    _abbrBundle = bundle;
+    
+    return _abbrBundle;
+}
+
 
 - (UIBarButtonItem *)backBarButtonItem {
     if (_backBarButtonItem) return _backBarButtonItem;
@@ -1661,13 +1687,15 @@ BOOL AX_WEB_VIEW_CONTROLLER_iOS10_0_AVAILABLE() { return AX_WEB_VIEW_CONTROLLER_
 }
 
 - (void)updateNavigationItems {
+        
     [self.navigationItem setLeftBarButtonItems:nil animated:NO];
     if (self.webView.canGoBack/* || self.webView.backForwardList.backItem*/) {// Web view can go back means a lot requests exist.
         UIBarButtonItem *spaceButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
         spaceButtonItem.width = -6.5;
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+        NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithArray:@[self.navigationBackBarButtonItem,spaceButtonItem]];
+
         if (self.navigationController.viewControllers.count == 1) {
-            NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithArray:@[spaceButtonItem,self.navigationBackBarButtonItem]];
             // If the top view controller of the navigation controller is current vc, the close item is ignored.
             if (self.showsNavigationCloseBarButtonItem && self.navigationController.topViewController != self){
                 [leftBarButtonItems addObject:self.navigationCloseBarButtonItem];
@@ -1676,14 +1704,16 @@ BOOL AX_WEB_VIEW_CONTROLLER_iOS10_0_AVAILABLE() { return AX_WEB_VIEW_CONTROLLER_
             [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
         } else {
             if (self.showsNavigationCloseBarButtonItem){
-                [self.navigationItem setLeftBarButtonItems:@[self.navigationCloseBarButtonItem] animated:NO];
+                [leftBarButtonItems addObject:self.navigationCloseBarButtonItem];
+
+                [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
             }else{
-                [self.navigationItem setLeftBarButtonItems:@[] animated:NO];
+                [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
             }
         }
     } else {
         self.navigationController.interactivePopGestureRecognizer.enabled = YES;
-        [self.navigationItem setLeftBarButtonItems:nil animated:NO];
+        [self.navigationItem setLeftBarButtonItems:@[self.navigationBackBarButtonItem] animated:NO];
     }
 }
 

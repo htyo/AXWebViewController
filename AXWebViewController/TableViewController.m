@@ -39,6 +39,7 @@
         {
             AXWebViewController *webVC = [[AXWebViewController alloc] initWithURL:[NSURL fileURLWithPath:[NSBundle.mainBundle pathForResource:@"Swift" ofType:@"pdf"]]];
             webVC.title = @"Swift.pdf";
+            
             webVC.showsToolBar = NO;
             if (AX_WEB_VIEW_CONTROLLER_iOS9_0_AVAILABLE()) {
                 webVC.webView.allowsLinkPreview = YES;
@@ -49,6 +50,9 @@
         case 1:
         {
             AXWebViewController *webVC = [[AXWebViewController alloc] initWithAddress:@"http://www.baidu.com"];
+//            webVC.navigationItem.leftItemsSupplementBackButton = NO;
+//            webVC.showsNavigationBackBarButtonItemTitle = NO;
+            webVC.abbr = @"en";
             webVC.showsToolBar = NO;
             // webVC.showsNavigationCloseBarButtonItem = NO;
             if (AX_WEB_VIEW_CONTROLLER_iOS9_0_AVAILABLE()) {

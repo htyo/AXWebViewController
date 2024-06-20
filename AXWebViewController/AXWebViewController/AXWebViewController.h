@@ -124,6 +124,9 @@ typedef NSURLSessionAuthChallengeDisposition (^WKWebViewDidReceiveAuthentication
 
 @property(readonly, nonatomic) WKWebView *webView;
 
+// 强制设置语言 目前只有 en zh-Hant zh-Hans
+@property (strong, nonatomic) NSString * abbr;
+
 #if AX_WEB_VIEW_CONTROLLER_USING_WEBKIT
 /// Default is NO. Enabled to allow present alert views.
 @property(assign, nonatomic) BOOL enabledWebViewUIDelegate;
