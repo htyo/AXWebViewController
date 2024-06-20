@@ -1699,16 +1699,16 @@ BOOL AX_WEB_VIEW_CONTROLLER_iOS10_0_AVAILABLE() { return AX_WEB_VIEW_CONTROLLER_
             // If the top view controller of the navigation controller is current vc, the close item is ignored.
             if (self.showsNavigationCloseBarButtonItem && self.navigationController.topViewController != self){
                 [leftBarButtonItems addObject:self.navigationCloseBarButtonItem];
+                [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
+            } else{
+                [self.navigationItem setLeftBarButtonItems:@[self.navigationBackBarButtonItem] animated:NO];
             }
-            
-            [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
         } else {
             if (self.showsNavigationCloseBarButtonItem){
                 [leftBarButtonItems addObject:self.navigationCloseBarButtonItem];
-
                 [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
             }else{
-                [self.navigationItem setLeftBarButtonItems:leftBarButtonItems animated:NO];
+                [self.navigationItem setLeftBarButtonItems:@[self.navigationBackBarButtonItem] animated:NO];
             }
         }
     } else {
